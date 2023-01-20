@@ -1,23 +1,31 @@
 '''
 Name: RelsieBot
-Author: Relsie, <Imperium>
-Date: April 2021
-Purpose: Built for <Imperium> on Wow Clasasic, Westfall NA discord server for fun, memes, and usefulness.
+Author: Relsie, <Mongrels>
+Date: January 2023
+Purpose: Fun, memes, and usefulness.
 
 TODO: 
 >>https://www.quora.com/How-can-I-store-user-input-using-my-discord-py-bot
 >>Implement data analysis visualizations and tools for:
-   - Imperium loot data
+   - Mongrels loot data
    - Warcraft logging data 
-   - Chilihop's addon thingy? How does that work? 
 '''
 
+# Discord imports
 import discord
 from discord.ext import commands
-import asyncio, nest_asyncio
 
+# Handling listeners
+import asyncio
+
+# Utility & data management
+from dotenv import load_dotenv, find_dotenv
 from io import BytesIO
 import datetime, os, sys, pytz, random, pandas as pd
+
+# Acquire proper bot token
+load_dotenv(find_dotenv)
+BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
 bot = commands.Bot(command_prefix="$", case_insensitive=True)
 
@@ -34,4 +42,5 @@ if __name__ == "__main__":
       except Exception as e:
          print(f'Failed to load extention {extension}, error msg: {str(e)}')
 
-bot.run("ODMzMTAxMzgxNjYwNTczNzE2.YHtcHw.rb2r0287XQcUyvAtezpIqWrQuYM")
+# Run the bot
+bot.run(BOT_TOKEN)
