@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-import asyncio, nest_asyncio
+import asyncio #, nest_asyncio
 
 class ModerationCog(commands.Cog, name='Moderation'):
     def __init__(self, bot):
@@ -23,6 +23,6 @@ class ModerationCog(commands.Cog, name='Moderation'):
         else:
             await ctx.send("You do not have permissions to use this command!")
 
-def setup(bot):
-    bot.add_cog(ModerationCog(bot))
+async def setup(bot):
+    await bot.add_cog(ModerationCog(bot))
     print("MODERATION cog loaded.")

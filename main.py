@@ -24,23 +24,26 @@ from io import BytesIO
 import datetime, os, sys, pytz, random, pandas as pd
 
 # Acquire proper bot token
-load_dotenv(find_dotenv)
+load_dotenv(find_dotenv())
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
-bot = commands.Bot(command_prefix="$", case_insensitive=True)
+intents = discord.Intents.all()
+intents.members = True
+intents.message_content = True
+bot = commands.Bot(command_prefix="$", case_insensitive=True, intents=intents)
 
 @bot.event
 async def on_ready():
    print('Loogged in as {0.user}!'.format(bot))
    return await bot.change_presence(activity=discord.Game(name="World of Warcraft Classic {$help}"))
 
-initial_extensions = ['cogs.fun','cogs.moderation'] # Add future cogs
-if __name__ == "__main__":
-   for extension in initial_extensions:
-      try:
-         bot.load_extension(extension)
-      except Exception as e:
-         print(f'Failed to load extention {extension}, error msg: {str(e)}')
+async def load():
+   for filename in os.listdir('./cogs'):
+      if filename.endswith('.py'):
+         await bot.load_extension(f'cogs.{filename[:-3]}')
 
-# Run the bot
-bot.run(BOT_TOKEN)
+async def main():
+   await load()
+   await bot.start(BOT_TOKEN) 
+
+asyncio.run(main())

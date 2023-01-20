@@ -1,13 +1,13 @@
 import discord
 from discord.ext import commands
-import asyncio, nest_asyncio
+import asyncio #, nest_asyncio
 
 import random
 
 class FunCog(commands.Cog, name='Fun'):
     def __init__(self, bot):
         self.bot = bot
-        
+
     @commands.command(help="$roll <low> <high>")
     async def roll(self, ctx, low=None, high=None):
         print(">>>roll called")
@@ -19,8 +19,8 @@ class FunCog(commands.Cog, name='Fun'):
         await ctx.send(rply)
         await ctx.message.delete()
 
-def setup(bot):
-    bot.add_cog(FunCog(bot))
+async def setup(bot):
+    await bot.add_cog(FunCog(bot))
     print('FUN cog loaded.')
     
     
