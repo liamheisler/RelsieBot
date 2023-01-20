@@ -10,6 +10,8 @@ venv.bak/
 # Secrets
 secrets/
 .secrets
+archive/
+.archive
 
 # Cython debug symbols
 cython_debug/
