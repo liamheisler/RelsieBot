@@ -23,14 +23,17 @@ from dotenv import load_dotenv, find_dotenv
 from io import BytesIO
 import datetime, os, sys, pytz, random, pandas as pd
 
-# Acquire proper bot token
+# Acquire proper bot token and API keys
 load_dotenv(find_dotenv())
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
+WCL_CLIENT_ID = os.environ.get("WCL_CLIENT_ID")
+WCL_CLIENT_SECRET = os.environ.get("WCL_CLIENT_SECRET")
 
 intents = discord.Intents.all()
 intents.members = True
 intents.message_content = True
 bot = commands.Bot(command_prefix="$", case_insensitive=True, intents=intents)
+
 
 @bot.event
 async def on_ready():
