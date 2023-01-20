@@ -1,21 +1,19 @@
 import discord
 from discord.ext import commands
 import asyncio #, nest_asyncio
+
+# Data processing
 import pandas as pd
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
 
 class OnslaughtCog(commands.Cog, name='Onslaught'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
-    async def ping(self, ctx):
-        await ctx.send(f'I am here, {ctx.message.author.mention}!')
-
-    @commands.command()
-    async def item_prio(self, ctx, item_name):
-        url_prio = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vScKkOmeZnsjBm-hVNDbhuDoPF_Ta2LtQPY_wkEk6DfWPp75AesKjmR97Fqa9rX7w9mhUMTqV_2Ru0J/pubhtml?gid=217967088&single=true'
-        df_prio = pd.read_csv(url_prio)
-        await ctx.send(f'Prio for {item_name}: {", ".join(df_prio.columns)}!')
+    @commands.command(help="$itemprio <item name>: Gets list of priorities on that item.")
+    async def itemprio(self, ctx, item_name):
+        await ctx.send(f'Get the prio for {item_name}!')
         
 
 async def setup(bot):
