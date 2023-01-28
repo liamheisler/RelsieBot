@@ -1,3 +1,0 @@
--implement DB to do basic data analysis and splinters
--more moderation features?
--more fun commands in cog

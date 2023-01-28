@@ -1,3 +1,15 @@
+'''
+TODO:
+- itemprio (alias it wth iprio, item, ip)
+  -- build out an embed for the prio
+  -- in this embed, show them column wise (row wise for equal prios)
+  -- connect up with the wowhead bot? [ITEM] might show? two embeds?
+- playerprio (alias it with pprio, player, pp)
+  -- stll in dev: get list of prios by the entered playername
+- bossloot (alias it with boss, bl)
+  -- get boss loot lists?
+'''
+
 # Discord util
 import discord
 from discord.ext import commands
