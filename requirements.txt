@@ -3,3 +3,8 @@ asyncio
 pandas
 numpy
 requests
+python-dotenv
+gspread
+oauth2client
+PyOpenSSL
+
