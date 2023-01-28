@@ -6,7 +6,7 @@ cachetools==5.2.1
 certifi==2022.12.7
 cffi==1.15.1
 charset-normalizer==2.1.1
-cryptography==3.4.6
+cryptography
 discord==2.1.0
 discord.py==2.1.0
 et-xmlfile==1.1.0
