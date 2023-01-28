@@ -101,7 +101,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             await ctx.send(f'Raider prio on {item_name.upper()} >> {player_list_string}')
 
         else:
-            await ctx.send(f'Could not find the requested item: {item_name}!')
+            await ctx.send(f'Could not find requested item: {item_name}!')
         
     @commands.command(help="$playerprio: Gets & ranks players priorities (basically recreate your sheet).")
     async def playerprio(self, ctx, player_name):
