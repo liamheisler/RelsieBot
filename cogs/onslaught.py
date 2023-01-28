@@ -35,8 +35,6 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         if use_api:
             pass
         else:
-            #DATA_PATH = Path.cwd().joinpath("data")
-
             # an attempt to avoid hidden files...
             DATA_FILES = [x for x in os.listdir(DATA_PATH) if x[0].isdigit()]
             
@@ -83,7 +81,6 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             # drop irrelev columns
             drop_cols = ['blank1', 'blank2', 'loot_type', 'blank3']
             df_item.drop(columns=drop_cols, inplace=True)
-
             
             # figure out which columns of player_<> has non-blank values
             player_list = []
@@ -93,8 +90,6 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                     if not player.isalpha():
                         player_list.append(player)
                         
-
-            
             player_list_string = ", ".join(player_list)
 
             print(f">> itemprio: Located {item_name} and found prio: {player_list_string}")
