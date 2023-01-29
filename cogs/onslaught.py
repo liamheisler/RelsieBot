@@ -83,54 +83,67 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
         df = self.read_data()
 
-        # Define the embed for the msg
-        embed = discord.Embed(
-                #title = "itemprio",
-                color = 0x808080,
-                timestamp = ctx.message.created_at
-            )
-
         if item_name is not None:
             # Get a list of relevent items
             item_list = list(df['item'].unique())
             item_list = [str(x).lower() for x in item_list]
 
             if item_name.lower() in item_list:
-                df_item = df[df['item'].str.lower() == item_name.lower()]
+                async with ctx.typing():
+                    # Define the embed for the msg
+                    embed = discord.Embed(
+                            title = f"Item priority: {item_name.upper()}",
+                            color = 0x808080,
+                            timestamp = ctx.message.created_at
+                        )
+                    df_item = df[df['item'].str.lower() == item_name.lower()]
 
-                # drop irrelev columns
-                drop_cols = ['blank1', 'blank2', 'loot_type', 'blank3']
-                df_item.drop(columns=drop_cols, inplace=True)
-                
-                # figure out which columns of player_<> has non-blank values
-                player_list = []
-                for col in df_item.columns:
-                    if 'player' in col:
-                        player = str(df_item[col].tolist()[0])
-                        if not player.isalpha():
-                            player_list.append(player)
-                
-                player_list_string = ", ".join(player_list)
-
-                # build a ranking dict
-                rank_dict = {}
-                for player_with_prio in player_list:
-                    player = player_with_prio.split(":")[0]
-                    rank = float(player_with_prio.split(":")[1].strip())
-
-                    if player not in list(rank_dict.keys()):
-                        rank_dict[player] = rank
+                    # drop irrelev columns
+                    drop_cols = ['blank1', 'blank2', 'loot_type', 'blank3']
+                    df_item.drop(columns=drop_cols, inplace=True)
                     
-                df_rank = pd.DataFrame.from_dict(
-                    rank_dict.items(),
-                )
-                df_rank.columns = ['player', 'rank']
+                    # figure out which columns of player_<> has non-blank values
+                    player_list = []
+                    for col in df_item.columns:
+                        if 'player' in col:
+                            player = str(df_item[col].tolist()[0])
+                            if not player.isalpha():
+                                player_list.append(player)
+                    
+                    player_list_string = ", ".join(player_list)
 
-                # not needed but ensures proper rank is available
-                df_rank.sort_values(by='rank', inplace=True, ascending=False)
-                print(df_rank)
-                
-                await ctx.send(f'Raider prio on {item_name.upper()} >> {rank_dict}')
+                    # build a ranking dict
+                    rank_dict = {}
+                    for player_with_prio in player_list:
+                        player = player_with_prio.split(":")[0]
+                        rank = float(player_with_prio.split(":")[1].strip())
+
+                        if player not in list(rank_dict.keys()):
+                            rank_dict[player] = rank
+                        
+                    df_rank = pd.DataFrame.from_dict(
+                        rank_dict.items()
+                    )
+                    df_rank.columns = ['player', 'prio']
+                    
+                    # group the players by their prio & put into a final, displayable embed
+                    df_display = df_rank.groupby('prio')['player'].apply(list).reset_index()
+                    df_display.columns = ['prio', 'players']
+                    df_display.sort_values(by='prio', inplace=True, ascending=False)
+
+                    n = 1
+                    for index, row in df_display.iterrows():
+                        prio = float(row['prio'])
+                        players = ", ".join(row['players'])
+                        embed.add_field(
+                            name = f'{n} ~ {players}',
+                            value = f'Priority: {prio}',
+                            inline = False
+                        )
+                        n += 1
+                        
+                    # send msg back to user with the generated embed
+                    await ctx.send(embed=embed)
 
             else:
                 await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
