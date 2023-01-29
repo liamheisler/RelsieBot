@@ -8,7 +8,7 @@ class FunCog(commands.Cog, name='Fun'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(help="$roll <low> <high>")
+    @commands.command(help="$roll <low> <high>, 1-100 default")
     async def roll(self, ctx, low=None, high=None):
         print(">>>roll called")
         if low is None and high is None:

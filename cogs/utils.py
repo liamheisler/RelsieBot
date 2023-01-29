@@ -11,7 +11,7 @@ class UtilsCog(commands.Cog, name='Utils'):
     async def ping(self, ctx):
         await ctx.send(f'I am here, {ctx.message.author.mention}!')
 
-    @commands.command(help="$reload: Reloads all cogs or a specific .")
+    @commands.command(help="Reloads all or a specified cog")
     async def reload(self, ctx, cog=None):
         print(">> reload command called, reloading neccessary packages")
         if not cog:

@@ -32,7 +32,6 @@ intents.members = True
 intents.message_content = True
 bot = commands.Bot(command_prefix="$", case_insensitive=True, intents=intents)
 
-
 @bot.event
 async def on_ready():
    print('Loogged in as {0.user}!'.format(bot))
