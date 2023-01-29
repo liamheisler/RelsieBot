@@ -79,36 +79,63 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                 return df
 
     @commands.command(help="$itemprio <item name>: Gets list of priorities on that item.")
-    async def itemprio(self, ctx, *, item_name):
+    async def itemprio(self, ctx, *, item_name=None):
         # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
         df = self.read_data()
 
-        # Get a list of relevent items
-        item_list = list(df['item'].unique())
-        item_list = [str(x).lower() for x in item_list]
+        # Define the embed for the msg
+        embed = discord.Embed(
+                #title = "itemprio",
+                color = 0x808080,
+                timestamp = ctx.message.created_at
+            )
 
-        if item_name.lower() in item_list:
-            df_item = df[df['item'].str.lower() == item_name.lower()]
+        if item_name is not None:
+            # Get a list of relevent items
+            item_list = list(df['item'].unique())
+            item_list = [str(x).lower() for x in item_list]
 
-            # drop irrelev columns
-            drop_cols = ['blank1', 'blank2', 'loot_type', 'blank3']
-            df_item.drop(columns=drop_cols, inplace=True)
-            
-            # figure out which columns of player_<> has non-blank values
-            player_list = []
-            for col in df_item.columns:
-                if 'player' in col:
-                    player = str(df_item[col].tolist()[0])
-                    if not player.isalpha():
-                        player_list.append(player)
-                        
-            player_list_string = ", ".join(player_list)
+            if item_name.lower() in item_list:
+                df_item = df[df['item'].str.lower() == item_name.lower()]
 
-            print(f">> itemprio: Located {item_name} and found prio: {player_list_string}")
-            await ctx.send(f'Raider prio on {item_name.upper()} >> {player_list_string}')
+                # drop irrelev columns
+                drop_cols = ['blank1', 'blank2', 'loot_type', 'blank3']
+                df_item.drop(columns=drop_cols, inplace=True)
+                
+                # figure out which columns of player_<> has non-blank values
+                player_list = []
+                for col in df_item.columns:
+                    if 'player' in col:
+                        player = str(df_item[col].tolist()[0])
+                        if not player.isalpha():
+                            player_list.append(player)
+                
+                player_list_string = ", ".join(player_list)
 
+                # build a ranking dict
+                rank_dict = {}
+                for player_with_prio in player_list:
+                    player = player_with_prio.split(":")[0]
+                    rank = float(player_with_prio.split(":")[1].strip())
+
+                    if player not in list(rank_dict.keys()):
+                        rank_dict[player] = rank
+                    
+                df_rank = pd.DataFrame.from_dict(
+                    rank_dict.items(),
+                )
+                df_rank.columns = ['player', 'rank']
+
+                # not needed but ensures proper rank is available
+                df_rank.sort_values(by='rank', inplace=True, ascending=False)
+                print(df_rank)
+                
+                await ctx.send(f'Raider prio on {item_name.upper()} >> {rank_dict}')
+
+            else:
+                await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
         else:
-            await ctx.send(f'Could not find requested item: {item_name}!')
+            await ctx.send(f"How can I check the item prio if you don't enter an item? reeeeeee")
         
     @commands.command(help="$playerprio: Gets & ranks players priorities (basically recreate your sheet).")
     async def playerprio(self, ctx, player_name):
