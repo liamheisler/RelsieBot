@@ -57,7 +57,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             if len(DATA_FILES) > 0:
                 latest_file = sorted(DATA_FILES, reverse=True)[0]
                 df = pd.read_excel(DATA_PATH.joinpath(latest_file))
-                #print(f">> read_data: {latest_file} identified as latest data file. Extracted data.")
+                print(f">> read_data: {latest_file} identified as latest data file. Extracted data.")
 
                 # Drop up to row n since the first rows are ugly and unneccessary
                 n = 6
@@ -89,73 +89,80 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
         df = self.read_data()
 
-        if item_name is not None:
-            # Get a list of relevent items
-            item_list = list(df['item'].unique())
-            item_list = [str(x).lower() for x in item_list]
+        test_bot_commands_channel_ID = 1070546828480749608
+        #mongrels_bot_commands_channel_ID = 996617541315215475
 
-            if item_name.lower() in item_list:
-                async with ctx.typing():
-                    # Define the embed for the msg
-                    embed = discord.Embed(
-                            title = f"Item priority: {item_name.upper()}",
-                            color = 0x808080,
-                            timestamp = ctx.message.created_at
-                        )
-                    df_item = df[df['item'].str.lower() == item_name.lower()]
+        if ctx.message.channel.id == test_bot_commands_channel_ID:
+            if item_name is not None:
+                # Get a list of relevent items
+                item_list = list(df['item'].unique())
+                item_list = [str(x).lower() for x in item_list]
 
-                    # drop irrelev columns
-                    drop_cols = ['blank1', 'blank2', 'loot_type', 'blank3']
-                    df_item.drop(columns=drop_cols, inplace=True)
-                    
-                    # figure out which columns of player_<> has non-blank values
-                    player_list = []
-                    for col in df_item.columns:
-                        if 'player' in col:
-                            player = str(df_item[col].tolist()[0])
-                            if self.has_numbers(player):
-                                player_list.append(player)
-                    
-                    player_list_string = ", ".join(player_list)
+                if item_name.lower() in item_list:
+                    async with ctx.typing():
+                        # Define the embed for the msg
+                        embed = discord.Embed(
+                                title = f"Item priority: {item_name.upper()}",
+                                color = 0x808080,
+                                timestamp = ctx.message.created_at
+                            )
+                        df_item = df[df['item'].str.lower() == item_name.lower()]
 
-                    # build a ranking dict
-                    rank_dict = {}
-                    for player_with_prio in player_list:
-                        player = player_with_prio.split(":")[0]
-                        rank = float(player_with_prio.split(":")[1].strip())
-
-                        if player not in list(rank_dict.keys()):
-                            rank_dict[player] = rank
+                        # drop irrelev columns
+                        drop_cols = ['blank1', 'blank2', 'loot_type', 'blank3']
+                        df_item.drop(columns=drop_cols, inplace=True)
                         
-                    df_rank = pd.DataFrame.from_dict(
-                        rank_dict.items()
-                    )
-                    df_rank.columns = ['player', 'prio']
-                    
-                    # group the players by their prio & put into a final, displayable embed
-                    df_display = df_rank.groupby('prio')['player'].apply(list).reset_index()
-                    df_display.columns = ['prio', 'players']
-                    df_display.sort_values(by='prio', inplace=True, ascending=False)
-
-                    n = 1
-                    for index, row in df_display.iterrows():
-                        prio = float(row['prio'])
-                        players = ", ".join(row['players'])
-                        embed.add_field(
-                            name = f'{n} ~ {players}',
-                            value = f'Priority: {prio}',
-                            inline = False
-                        )
-                        n += 1
+                        # figure out which columns of player_<> has non-blank values
+                        player_list = []
+                        for col in df_item.columns:
+                            if 'player' in col:
+                                player = str(df_item[col].tolist()[0])
+                                if self.has_numbers(player):
+                                    player_list.append(player)
                         
-                    # send msg back to user with the generated embed
-                    await ctx.send(embed=embed)
-                    print(">> itemprio: Sent itemprio readout to command caller")
+                        player_list_string = ", ".join(player_list)
 
+                        # build a ranking dict
+                        rank_dict = {}
+                        for player_with_prio in player_list:
+                            player = player_with_prio.split(":")[0]
+                            rank = float(player_with_prio.split(":")[1].strip())
+
+                            if player not in list(rank_dict.keys()):
+                                rank_dict[player] = rank
+                            
+                        df_rank = pd.DataFrame.from_dict(
+                            rank_dict.items()
+                        )
+                        df_rank.columns = ['player', 'prio']
+                        
+                        # group the players by their prio & put into a final, displayable embed
+                        df_display = df_rank.groupby('prio')['player'].apply(list).reset_index()
+                        df_display.columns = ['prio', 'players']
+                        df_display.sort_values(by='prio', inplace=True, ascending=False)
+
+                        n = 1
+                        for index, row in df_display.iterrows():
+                            prio = float(row['prio'])
+                            players = ", ".join(row['players'])
+                            embed.add_field(
+                                name = f'{n} ~ {players}',
+                                value = f'Priority: {prio}',
+                                inline = False
+                            )
+                            n += 1
+                            
+                        # send msg back to user with the generated embed
+                        await ctx.send(embed=embed)
+                        print(">> itemprio: Sent itemprio readout to command caller")
+
+                else:
+                    await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
             else:
-                await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
+                await ctx.send(f"How can I check the item prio if you don't enter an item? reeeeeee")
         else:
-            await ctx.send(f"How can I check the item prio if you don't enter an item? reeeeeee")
+            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Hammerz said no posting loot sheet info outside of bot-commands. Nice try!")
+            
         
     @commands.command(
         help="List priorities & competition for given player",
@@ -165,54 +172,67 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         # start playerprio
         df = self.read_data().fillna("")
 
-        if player_name is not None:            
-            df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
-            
-            if not df_player.empty:
-                async with ctx.typing():
-                    embed = discord.Embed(
-                        title = f"Top 25 Priorities & Competition for: {player_name.upper()}",
-                        color = 0x808080,
-                        timestamp = ctx.message.created_at
-                    )
+        test_bot_commands_channel_ID = 1070546828480749608
+        #mongrels_bot_commands_channel_ID = 996617541315215475
 
-                    item_dict = {}
-                    df_items = pd.DataFrame(columns=["item", "max_prio", "player_list"])
+        enabled = False
 
-                    for index, row in df_player.iterrows():
-                        temp = pd.DataFrame(columns=["item", "max_prio", "player_list"])
+        if enabled:
+            if ctx.message.channel.id == test_bot_commands_channel_ID:
+                if player_name is not None:            
+                    df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
+                    
+                    if not df_player.empty:
+                        async with ctx.typing():
+                            embed = discord.Embed(
+                                title = f"Top 25 Priorities & Competition for: {player_name.upper()}",
+                                color = 0x808080,
+                                timestamp = ctx.message.created_at
+                            )
 
-                        # list of players for that item
-                        player_list = [player for player in list(row) if ":" in player]
-                        player_rank = [float(player.split(":")[1].strip()) for player in player_list if player_name.lower() in player.lower()][0]
+                            item_dict = {}
+                            df_items = pd.DataFrame(columns=["item", "max_prio", "player_list"])
 
-                        temp.loc[index] = [row['item'], player_rank, ", ".join(player_list)]
+                            for index, row in df_player.iterrows():
+                                temp = pd.DataFrame(columns=["item", "max_prio", "player_list"])
 
-                        df_items = pd.concat([df_items, temp], ignore_index=True)
+                                # list of players for that item
+                                player_list = [player for player in list(row) if ":" in player]
+                                player_rank = [float(player.split(":")[1].strip()) for player in player_list if player_name.lower() in player.lower()][0]
 
-                    df_items.sort_values(by='max_prio', inplace=True, ascending=False)
+                                temp.loc[index] = [row['item'], player_rank, ", ".join(player_list)]
 
-                    n = 1
-                    for index, row in df_items.iterrows():
-                        prio = float(row['max_prio'])
-                        item = row['item']
-                        competition = row['player_list']
+                                df_items = pd.concat([df_items, temp], ignore_index=True)
 
-                        #print(f"{prio} | {item} | {competition}")
+                            df_items.sort_values(by='max_prio', inplace=True, ascending=False)
 
-                        embed.add_field(
-                            name = f'Prio: {prio} ~ {item}',
-                            value = f'Competition: {competition}',
-                            inline = False
-                        )
-                        n += 1
+                            n = 1
+                            for index, row in df_items.iterrows():
+                                #print(row)
+                                prio = float(row['max_prio'])
+                                item = row['item']
+                                competition = row['player_list']
 
-                    await ctx.send(embed=embed)
-                    print(">> playerprio: Sent player prio readout to command caller")
+                                #print(f"{prio} | {item} | {competition}")
+
+                                embed.add_field(
+                                    name = f'Prio: {prio} ~ {item}',
+                                    value = f'Competition: {competition}',
+                                    inline = False
+                                )
+                                n += 1
+
+                            await ctx.send(embed=embed)
+                            print(">> playerprio: Sent player prio readout to command caller")
+                    else:
+                        await ctx.send(f"Can't get {player_name}'s loot sheet if they aren't on the loot sheet!")
+                else:
+                    await ctx.send(f"Homie I can't get a loot sheet for someone if you don't enter their name!")
             else:
-                await ctx.send(f"Can't get {player_name}'s loot sheet if they aren't on the loot sheet!")
+                await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Hammerz said no posting loot sheet info outside of bot-commands. Nice try!")
         else:
-            await ctx.send(f"Homie I can't get a loot sheet for someone if you don't enter their name!")
+            await ctx.send("That mf Relsie disabled this command, didn't think it was that helpful. To be replaced with a upnext type of command.")
+
 
     @commands.command(
         help="Get the loot sheet for that player",
@@ -222,53 +242,59 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
         df = self.read_data().fillna("")
 
-        if player_name is not None:            
-            df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
-            
-            if not df_player.empty:
-                async with ctx.typing():
-                    embed = discord.Embed(
-                        title = f"Top 25 items for: {player_name.upper()}",
-                        color = 0x808080,
-                        timestamp = ctx.message.created_at
-                    )
+        test_bot_commands_channel_ID = 1070546828480749608
+        #mongrels_bot_commands_channel_ID = 996617541315215475
 
-                    item_dict = {}
-                    df_items = pd.DataFrame(columns=["item", "max_prio", "player_list"])
-
-                    for index, row in df_player.iterrows():
-                        temp = pd.DataFrame(columns=["item", "max_prio", "player_list"])
-
-                        # list of players for that item
-                        player_list = [player for player in list(row) if ":" in player]
-                        player_rank = [float(player.split(":")[1].strip()) for player in player_list if player_name.lower() in player.lower()][0]
-
-                        temp.loc[index] = [row['item'], player_rank, ", ".join(player_list)]
-
-                        df_items = pd.concat([df_items, temp], ignore_index=True)
-
-                        df_display = df_items.groupby('max_prio')['item'].apply(list).reset_index()
-
-                    df_display.sort_values(by='max_prio', inplace=True, ascending=False)
-
-                    n = 1
-                    for index, row in df_display.iterrows():
-                        prio = float(row['max_prio'])
-                        items = ", ".join(row['item'])
-                        embed.add_field(
-                            name = f'{items}',
-                            value = f'{n} : Priority: {prio}',
-                            inline = False
+        if ctx.message.channel.id == test_bot_commands_channel_ID:
+            if player_name is not None:            
+                df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
+                
+                if not df_player.empty:
+                    async with ctx.typing():
+                        embed = discord.Embed(
+                            title = f"Top 25 items for: {player_name.upper()}",
+                            color = 0x808080,
+                            timestamp = ctx.message.created_at
                         )
-                        n += 1
 
-                    await ctx.send(embed=embed)
-                    print(">> lootsheet: Sent loot sheet to command caller")
-                    #await ctx.send(f"{df_display}")
+                        item_dict = {}
+                        df_items = pd.DataFrame(columns=["item", "max_prio", "player_list"])
+
+                        for index, row in df_player.iterrows():
+                            temp = pd.DataFrame(columns=["item", "max_prio", "player_list"])
+
+                            # list of players for that item
+                            player_list = [player for player in list(row) if ":" in player]
+                            player_rank = [float(player.split(":")[1].strip()) for player in player_list if player_name.lower() in player.lower()][0]
+
+                            temp.loc[index] = [row['item'], player_rank, ", ".join(player_list)]
+
+                            df_items = pd.concat([df_items, temp], ignore_index=True)
+
+                            df_display = df_items.groupby('max_prio')['item'].apply(list).reset_index()
+
+                        df_display.sort_values(by='max_prio', inplace=True, ascending=False)
+
+                        n = 1
+                        for index, row in df_display.iterrows():
+                            prio = float(row['max_prio'])
+                            items = ", ".join(row['item'])
+                            embed.add_field(
+                                name = f'{items}',
+                                value = f'{n} : Priority: {prio}',
+                                inline = False
+                            )
+                            n += 1
+
+                        await ctx.send(embed=embed)
+                        print(">> lootsheet: Sent loot sheet to command caller")
+                        #await ctx.send(f"{df_display}")
+                else:
+                    await ctx.send(f"Can't get {player_name}'s loot sheet if they aren't on the loot sheet!")
             else:
-                await ctx.send(f"Can't get {player_name}'s loot sheet if they aren't on the loot sheet!")
+                await ctx.send(f"Homie I can't get a loot sheet for someone if you don't enter their name!")
         else:
-            await ctx.send(f"Homie I can't get a loot sheet for someone if you don't enter their name!")
+            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Hammerz said no posting loot sheet info outside of bot-commands. Nice try!")
 
     
     @commands.command(
