@@ -20,7 +20,7 @@ import os
 import sys
 from pathlib import *
 import string
-import Fuzzy
+from fuzzywuzzy import fuzz
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -96,9 +96,17 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         if ctx.message.channel.id == test_bot_commands_channel_ID:
             if item_name is not None:
                 # Get a list of relevent items
+                #item_name = item_name + "(Heroic)" # just assume it's all heroic
+
                 item_list = list(df['item'].unique())
                 item_list = [str(x).lower() for x in item_list]
 
+                # highest matching similarity score from fuzzss
+                scores = {item:fuzz.ratio(item, item_name.lower()) for item in item_list}
+                # print(sorted(scores.items(), key=lambda x:x[1])) #debug purposes
+                print()
+
+                item_name = max(scores, key=scores.get)
                 if item_name.lower() in item_list:
                     async with ctx.typing():
                         # Define the embed for the msg
