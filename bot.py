@@ -3,12 +3,6 @@ Name: RelsieBot
 Author: Relsie, <Mongrels>
 Date: January 2023
 Purpose: Fun, memes, and usefulness.
-
-TODO: 
->>https://www.quora.com/How-can-I-store-user-input-using-my-discord-py-bot
->>Implement data analysis visualizations and tools for:
-   - Mongrels loot data
-   - Warcraft logging data 
 '''
 
 # Discord imports
