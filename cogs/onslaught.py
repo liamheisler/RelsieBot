@@ -172,7 +172,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             else:
                 await ctx.send(f"How can I check the item prio if you don't enter an item? reeeeeee")
         else:
-            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Hammerz said no posting loot sheet info outside of bot-commands. Nice try!")
+            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting loot sheet info outside of bot-commands. Nice try!")
             
         
     @commands.command(
@@ -240,7 +240,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                 else:
                     await ctx.send(f"Homie I can't get a loot sheet for someone if you don't enter their name!")
             else:
-                await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Hammerz said no posting loot sheet info outside of bot-commands. Nice try!")
+                await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting loot sheet info outside of bot-commands. Nice try!")
         else:
             await ctx.send("That mf Relsie disabled this command, didn't think it was that helpful. To be replaced with a upnext type of command.")
 
@@ -306,7 +306,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             else:
                 await ctx.send(f"Homie I can't get a loot sheet for someone if you don't enter their name!")
         else:
-            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Hammerz said no posting loot sheet info outside of bot-commands. Nice try!")
+            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting loot sheet info outside of bot-commands. Nice try!")
 
     
     @commands.command(
