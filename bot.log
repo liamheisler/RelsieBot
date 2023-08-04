@@ -112,3 +112,16 @@
 2023-08-04 19:27:27,680 - cogs.onslaught - INFO - relsie#0 called $itemprio in channel bot-commands
 2023-08-04 19:27:27,801 - cogs.onslaught - INFO - read_data: 20230804_prio.xlsx identified as latest data file. Extracted data.
 2023-08-04 19:27:28,449 - cogs.onslaught - INFO - itemprio: sent item prio to relsie#0 in channel 996617541315215475
+2023-08-04 19:33:59,786 - cogs.fun - INFO - fun.py cog loaded
+2023-08-04 19:33:59,787 - cogs.moderation - INFO - moderation.py cog loaded
+2023-08-04 19:34:00,079 - cogs.onslaught - INFO - onslaught.py cog loaded
+2023-08-04 19:34:00,081 - cogs.openai - INFO - openai.py cog loaded
+2023-08-04 19:34:00,082 - cogs.utils - INFO - utils.py cog loaded
+2023-08-04 19:34:02,798 - __main__ - INFO - Logged in as RelsieBot#8030
+2023-08-04 19:34:09,586 - cogs.onslaught - INFO - relsie#0 called $playerprio in channel bot-commands
+2023-08-04 19:34:09,854 - cogs.onslaught - INFO - read_data: 20230804_prio.xlsx identified as latest data file. Extracted data.
+2023-08-04 19:34:10,237 - cogs.onslaught - INFO - playerprio: sent playerprio to relsie#0 in channel bot-commands
+2023-08-04 19:34:22,886 - cogs.onslaught - INFO - relsie#0 called $lootsheet in channel bot-commands
+2023-08-04 19:34:23,025 - cogs.onslaught - INFO - read_data: 20230804_prio.xlsx identified as latest data file. Extracted data.
+2023-08-04 19:34:23,028 - cogs.onslaught - INFO - bot-commands
+2023-08-04 19:34:23,365 - cogs.onslaught - INFO - lootsheet: sent loot sheet to relsie#0 in channel bot-commands
