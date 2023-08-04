@@ -35,7 +35,6 @@ with open(CONFIG_FILE) as f:
    logging.config.dictConfig(logging_config)
 
 logger = logging.getLogger(__name__)
-logger.debug("This is a debug msg")
 
 
 # Acquire proper bot token and API keys
