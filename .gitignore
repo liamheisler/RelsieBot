@@ -54,3 +54,6 @@ __pycache__/
 
 # C extensions
 *.so
+
+# ignore the log file(s)
+*.log
