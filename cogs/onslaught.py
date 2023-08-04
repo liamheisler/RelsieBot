@@ -22,6 +22,9 @@ from pathlib import *
 import string
 from rapidfuzz import fuzz
 
+import logging
+logger = logging.getLogger(__name__)
+
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -58,7 +61,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             if len(DATA_FILES) > 0:
                 latest_file = sorted(DATA_FILES, reverse=True)[0]
                 df = pd.read_excel(DATA_PATH.joinpath(latest_file))
-                print(f">> read_data: {latest_file} identified as latest data file. Extracted data.")
+                logger.info(f"read_data: {latest_file} identified as latest data file. Extracted data.")
 
                 # Drop up to row n since the first rows are ugly and unneccessary
                 n = 6
@@ -89,11 +92,14 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
     async def itemprio(self, ctx, *, item_name=None):
         # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
         df = self.read_data()
+        
+        logger.info(f"{ctx.message.author} called $itemprio in channel {ctx.message.channel}")
+        
+        # channel NAME instead of id?
+        #test_bot_commands_channel_ID = 1070546828480749608
+        mongrels_bot_commands_channel_ID = 996617541315215475
 
-        test_bot_commands_channel_ID = 1070546828480749608
-        #mongrels_bot_commands_channel_ID = 996617541315215475
-
-        if ctx.message.channel.id == test_bot_commands_channel_ID:
+        if ctx.message.channel.id == mongrels_bot_commands_channel_ID:
             if item_name is not None:
                 # Get a list of relevent items
                 #item_name = item_name + "(Heroic)" # just assume it's all heroic
@@ -161,7 +167,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                             
                         # send msg back to user with the generated embed
                         await ctx.send(embed=embed)
-                        print(">> itemprio: Sent itemprio readout to command caller")
+                        logger.info(f"itemprio: sent item prio to {ctx.message.author} in channel {ctx.message.channel}")
 
                 else:
                     await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
@@ -179,13 +185,15 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         # start playerprio
         df = self.read_data().fillna("")
 
-        test_bot_commands_channel_ID = 1070546828480749608
-        #mongrels_bot_commands_channel_ID = 996617541315215475
+        logger.info(f"{ctx.message.author} called $playerprio in channel {ctx.message.channel}")
 
-        enabled = False
+        #test_bot_commands_channel_ID = 1070546828480749608
+        mongrels_bot_commands_channel_ID = 996617541315215475
+
+        enabled = True
 
         if enabled:
-            if ctx.message.channel.id == test_bot_commands_channel_ID:
+            if ctx.message.channel.id == mongrels_bot_commands_channel_ID:
                 if player_name is not None:            
                     df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
                     
@@ -230,7 +238,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                                 n += 1
 
                             await ctx.send(embed=embed)
-                            print(">> playerprio: Sent player prio readout to command caller")
+                            logger.info(f"playerprio: sent playerprio to {ctx.message.author} in channel {ctx.message.channel}")
                     else:
                         await ctx.send(f"Can't get {player_name}'s loot sheet if they aren't on the loot sheet!")
                 else:
@@ -249,10 +257,12 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
         df = self.read_data().fillna("")
 
-        test_bot_commands_channel_ID = 1070546828480749608
-        #mongrels_bot_commands_channel_ID = 996617541315215475
+        logger.info(f"{ctx.message.author} called $lootsheet in channel {ctx.message.channel}")
 
-        if ctx.message.channel.id == test_bot_commands_channel_ID:
+        #test_bot_commands_channel_ID = 1070546828480749608
+        mongrels_bot_commands_channel_ID = 996617541315215475
+
+        if ctx.message.channel.id == mongrels_bot_commands_channel_ID:
             if player_name is not None:            
                 df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
                 
@@ -294,7 +304,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                             n += 1
 
                         await ctx.send(embed=embed)
-                        print(">> lootsheet: Sent loot sheet to command caller")
+                        logger.info(f"lootsheet: sent loot sheet to {ctx.message.author} in channel {ctx.message.channel}")
                         #await ctx.send(f"{df_display}")
                 else:
                     await ctx.send(f"Can't get {player_name}'s loot sheet if they aren't on the loot sheet!")
@@ -317,4 +327,4 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
 async def setup(bot):
     await bot.add_cog(OnslaughtCog(bot))
-    print("ONSLAUGHT cog loaded.")
+    logger.info(f"onslaught.py cog loaded")
