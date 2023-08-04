@@ -91,15 +91,13 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
     )
     async def itemprio(self, ctx, *, item_name=None):
         # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
-        df = self.read_data()
-        
         logger.info(f"{ctx.message.author} called $itemprio in channel {ctx.message.channel}")
-        
-        # channel NAME instead of id?
-        #test_bot_commands_channel_ID = 1070546828480749608
-        mongrels_bot_commands_channel_ID = 996617541315215475
 
-        if ctx.message.channel.id == mongrels_bot_commands_channel_ID:
+        df = self.read_data()
+
+        bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
+
+        if ctx.message.channel.id == bot_commands_channel_ID:
             if item_name is not None:
                 # Get a list of relevent items
                 #item_name = item_name + "(Heroic)" # just assume it's all heroic
@@ -167,7 +165,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                             
                         # send msg back to user with the generated embed
                         await ctx.send(embed=embed)
-                        logger.info(f"itemprio: sent item prio to {ctx.message.author} in channel {ctx.message.channel}")
+                        logger.info(f"itemprio: sent item prio to {ctx.message.author} in channel {ctx.message.channel.id}")
 
                 else:
                     await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
@@ -182,18 +180,16 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         aliases=['ppri', 'pp', 'player']
     )
     async def playerprio(self, ctx, player_name):
-        # start playerprio
-        df = self.read_data().fillna("")
-
         logger.info(f"{ctx.message.author} called $playerprio in channel {ctx.message.channel}")
 
-        #test_bot_commands_channel_ID = 1070546828480749608
-        mongrels_bot_commands_channel_ID = 996617541315215475
+        df = self.read_data().fillna("")
+
+        bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
         enabled = True
 
         if enabled:
-            if ctx.message.channel.id == mongrels_bot_commands_channel_ID:
+            if ctx.message.channel.id == bot_commands_channel_ID:
                 if player_name is not None:            
                     df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
                     
@@ -254,15 +250,14 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         aliases=['sheet', 'loot', 'ls']
     )
     async def lootsheet(self, ctx, player_name=None):
-
+        logger.info(f"{ctx.message.author} called $lootsheet in channel {ctx.message.channel}")
+        
         df = self.read_data().fillna("")
 
-        logger.info(f"{ctx.message.author} called $lootsheet in channel {ctx.message.channel}")
+        bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
-        #test_bot_commands_channel_ID = 1070546828480749608
-        mongrels_bot_commands_channel_ID = 996617541315215475
-
-        if ctx.message.channel.id == mongrels_bot_commands_channel_ID:
+        if ctx.message.channel.id == bot_commands_channel_ID:
+            logger.info(ctx.message.channel)
             if player_name is not None:            
                 df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
                 
