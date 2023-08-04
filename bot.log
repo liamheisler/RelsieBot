@@ -1,0 +1,10 @@
+2023-08-04 18:58:05,237 - cogs.fun - INFO - fun.py cog loaded
+2023-08-04 18:58:05,239 - cogs.moderation - INFO - moderation.py cog loaded
+2023-08-04 18:58:05,499 - cogs.onslaught - INFO - onslaught.py cog loaded
+2023-08-04 18:58:05,500 - cogs.openai - INFO - openai.py cog loaded
+2023-08-04 18:58:05,501 - cogs.utils - INFO - utils.py cog loaded
+2023-08-04 18:58:08,212 - __main__ - INFO - Logged in as RelsieBot#8030
+2023-08-04 18:58:29,906 - cogs.onslaught - INFO - read_data: 20230804_prio.xlsx identified as latest data file. Extracted data.
+2023-08-04 18:58:29,906 - cogs.onslaught - INFO - relsie#0 called $itemprio in channel bot-commands
+2023-08-04 18:58:32,510 - cogs.onslaught - INFO - read_data: 20230804_prio.xlsx identified as latest data file. Extracted data.
+2023-08-04 18:58:32,512 - cogs.onslaught - INFO - relsie#0 called $lootsheet in channel bot-commands

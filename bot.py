@@ -22,6 +22,21 @@ import asyncio
 from dotenv import load_dotenv, find_dotenv
 from io import BytesIO
 import datetime, os, sys, pytz, random, pandas as pd
+from pathlib import Path
+
+# setup and config logging
+import logging, logging.config, yaml
+
+ROOT = Path(__file__).absolute().parent
+CONFIG_FILE = ROOT / 'config' / 'logger.yml'
+
+with open(CONFIG_FILE) as f:
+   logging_config = yaml.safe_load(f.read())
+   logging.config.dictConfig(logging_config)
+
+logger = logging.getLogger(__name__)
+logger.debug("This is a debug msg")
+
 
 # Acquire proper bot token and API keys
 load_dotenv(find_dotenv())
@@ -34,7 +49,7 @@ bot = commands.Bot(command_prefix="$", case_insensitive=True, intents=intents)
 
 @bot.event
 async def on_ready():
-   print('Loogged in as {0.user}!'.format(bot))
+   logger.info(f"Logged in as {bot.user}")
    return await bot.change_presence(activity=discord.Game(name="World of Warcraft Classic {$help}"))
 
 async def load():

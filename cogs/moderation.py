@@ -2,6 +2,9 @@ import discord
 from discord.ext import commands
 import asyncio #, nest_asyncio
 
+import logging
+logger = logging.getLogger(__name__)
+
 class ModerationCog(commands.Cog, name='Moderation'):
     def __init__(self, bot):
         self.bot = bot
@@ -10,7 +13,7 @@ class ModerationCog(commands.Cog, name='Moderation'):
     async def purge(self, ctx, number:int=None):
         enabled = False
         if enabled:
-            print(">>>purge command called")
+            logger.info(f"{ctx.message.author} called $purge in channel {ctx.message.channel}")
             if ctx.message.author.guild_permissions.manage_messages:
                 try:
                     if number is None:
@@ -29,4 +32,4 @@ class ModerationCog(commands.Cog, name='Moderation'):
 
 async def setup(bot):
     await bot.add_cog(ModerationCog(bot))
-    print("MODERATION cog loaded.")
+    logger.info(f"moderation.py cog loaded")

@@ -3,17 +3,21 @@ from discord.ext import commands
 import asyncio #, nest_asyncio
 import os
 
+import logging
+logger = logging.getLogger(__name__)
+
 class UtilsCog(commands.Cog, name='Utils'):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
     async def ping(self, ctx):
+        logger.info(f"{ctx.message.author} called $ping in channel {ctx.message.channel}")
         await ctx.send(f'I am here, {ctx.message.author.mention}!')
 
     @commands.command(help="Reloads all or a specified cog")
     async def reload(self, ctx, cog=None):
-        print(">> reload command called, reloading neccessary packages")
+        logger.info(f"{ctx.message.author} called $reload in channel {ctx.message.channel}")
         if not cog:
             embed = discord.Embed(
                 title = "Reloading all cogs!",
@@ -58,4 +62,4 @@ class UtilsCog(commands.Cog, name='Utils'):
 
 async def setup(bot):
     await bot.add_cog(UtilsCog(bot))
-    print("UTILS cog loaded.")
+    logger.info(f"utils.py cog loaded")
