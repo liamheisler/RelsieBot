@@ -47,7 +47,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
     def has_numbers(self, inputString):
         return any(char.isdigit() for char in inputString)
     
-    def read_data(self):
+    def read_data(self, raid = None):
         # path to /data. cwd should hopefully let it be cross platform? need to test
         # filename: get specific file name for now
         use_api = False
@@ -60,7 +60,10 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             # get data from the most recent prio file
             if len(DATA_FILES) > 0:
                 latest_file = sorted(DATA_FILES, reverse=True)[0]
-                df = pd.read_excel(DATA_PATH.joinpath(latest_file))
+                if raid == 'active_tier':
+                    df = pd.read_excel(DATA_PATH.joinpath(latest_file))
+                else:
+                    df = pd.read_excel(DATA_PATH.joinpath(latest_file), sheet_name=raid)
                 logger.info(f"read_data: {latest_file} identified as latest data file. Extracted data.")
 
                 # Drop up to row n since the first rows are ugly and unneccessary
@@ -89,11 +92,22 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         help="List priorities for a given item",
         aliases=['ipri', 'ip', 'item']
     )
-    async def itemprio(self, ctx, *, item_name=None):
+    async def itemprio(self, ctx, *args):
         # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
         logger.info(f"{ctx.message.author} called $itemprio in channel {ctx.message.channel}")
 
-        df = self.read_data()
+        available_tiers = ['ulduar', 'togc', 'icc']
+        tier = [arg for arg in args if arg in available_tiers]
+        item_name = " ".join([arg for arg in args if arg not in available_tiers])
+
+        if len(tier) == 1:
+            tier = tier[0]
+        else:
+            tier = 'active_tier'
+        
+        logger.info(f"item_name = {item_name}, tier = {tier}")
+
+        df = self.read_data(tier)
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
@@ -179,10 +193,19 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         help="List priorities & competition for given player",
         aliases=['ppri', 'pp', 'player']
     )
-    async def playerprio(self, ctx, player_name):
+    async def playerprio(self, ctx, *args):
         logger.info(f"{ctx.message.author} called $playerprio in channel {ctx.message.channel}")
 
-        df = self.read_data().fillna("")
+        available_tiers = ['ulduar', 'togc', 'icc']
+        tier = [arg for arg in args if arg in available_tiers]
+        player_name = " ".join([arg for arg in args if arg not in available_tiers])
+
+        if len(tier) == 1:
+            tier = tier[0]
+        else:
+            tier = 'active_tier'
+
+        df = self.read_data(tier).fillna("")
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
@@ -249,10 +272,19 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         help="Get the loot sheet for that player",
         aliases=['sheet', 'loot', 'ls']
     )
-    async def lootsheet(self, ctx, player_name=None):
+    async def lootsheet(self, ctx, *args):
         logger.info(f"{ctx.message.author} called $lootsheet in channel {ctx.message.channel}")
+
+        available_tiers = ['ulduar', 'togc', 'icc']
+        tier = [arg for arg in args if arg in available_tiers]
+        player_name = " ".join([arg for arg in args if arg not in available_tiers])
+
+        if len(tier) == 1:
+            tier = tier[0]
+        else:
+            tier = 'active_tier'
         
-        df = self.read_data().fillna("")
+        df = self.read_data(tier).fillna("")
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
