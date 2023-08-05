@@ -434,8 +434,8 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                             passers = [passer for passer in passers if pd.notnull(passer)]
 
                             embed.add_field(
-                                name = f"{row['Date']} | {row['Received']}",
-                                value = f"",
+                                name = f"{row['Received']}",
+                                value = f"{row['Date']}",
                                 inline = False
                             )
                             
