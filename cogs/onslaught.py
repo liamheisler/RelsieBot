@@ -61,6 +61,8 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
                 df = pd.read_excel(DATA_PATH.joinpath(latest_file), sheet_name="loot")
 
+                df = df[(df['Item Not Received Data'] != '#VALUE!') & (df['Item Not Received Data'].notnull())]
+
                 logger.info(f"read_archived_loot_data: {latest_file} identified as latest data file. Extracted data.")
 
                 return df
