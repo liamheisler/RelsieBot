@@ -47,7 +47,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
     def has_numbers(self, inputString):
         return any(char.isdigit() for char in inputString)
     
-    def read_data(self):
+    def read_data(self, raid = None):
         # path to /data. cwd should hopefully let it be cross platform? need to test
         # filename: get specific file name for now
         use_api = False
@@ -60,7 +60,10 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             # get data from the most recent prio file
             if len(DATA_FILES) > 0:
                 latest_file = sorted(DATA_FILES, reverse=True)[0]
-                df = pd.read_excel(DATA_PATH.joinpath(latest_file))
+                if raid == 'active_tier':
+                    df = pd.read_excel(DATA_PATH.joinpath(latest_file))
+                else:
+                    df = pd.read_excel(DATA_PATH.joinpath(latest_file), sheet_name=raid)
                 logger.info(f"read_data: {latest_file} identified as latest data file. Extracted data.")
 
                 # Drop up to row n since the first rows are ugly and unneccessary
@@ -104,7 +107,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         
         logger.info(f"item_name = {item_name}, tier = {tier}")
 
-        df = self.read_data()
+        df = self.read_data(tier)
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
@@ -202,7 +205,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         else:
             tier = 'active_tier'
 
-        df = self.read_data().fillna("")
+        df = self.read_data(tier).fillna("")
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
@@ -281,7 +284,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         else:
             tier = 'active_tier'
         
-        df = self.read_data().fillna("")
+        df = self.read_data(tier).fillna("")
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
