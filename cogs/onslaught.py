@@ -280,11 +280,11 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                             await ctx.send(embed=embed)
                             logger.info(f"playerprio: sent playerprio to {ctx.message.author} in channel {ctx.message.channel}")
                     else:
-                        await ctx.send(f"Can't get {player_name}'s loot sheet if they aren't on the loot sheet!")
+                        await ctx.send(f"Can't get {player_name}'s player prio if they aren't on the sheet!")
                 else:
-                    await ctx.send(f"Homie I can't get a loot sheet for someone if you don't enter their name!")
+                    await ctx.send(f"Homie I can't get player prios for someone if you don't enter their name!")
             else:
-                await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting loot sheet info outside of bot-commands. Nice try!")
+                await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting player prio info outside of bot-commands. Nice try!")
         else:
             await ctx.send("That mf Relsie disabled this command, didn't think it was that helpful. To be replaced with a upnext type of command.")
 
@@ -429,7 +429,6 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                             passers = [row['Pass 1'], row['Pass 2'], row['Pass 3']]
                             passers = [passer for passer in passers if pd.notnull(passer)]
 
-                            logger.info(passers)
                             embed.add_field(
                                 name = f"{row['Date']} | {row['Received']}",
                                 value = f"{len(passers)} gamers passed",
@@ -443,14 +442,14 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                             
                         # send msg back to user with the generated embed
                         await ctx.send(embed=embed)
-                        logger.info(f"itemprio: sent item prio to {ctx.message.author} in channel {ctx.message.channel.id}")
+                        logger.info(f"checkdrops: sent drop stats to {ctx.message.author} in channel {ctx.message.channel.id}")
 
                 else:
-                    await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
+                    await ctx.send(f"How can I check the drop stats if you don't enter a valid item? reeeeeee")
             else:
-                await ctx.send(f"How can I check the item prio if you don't enter an item? reeeeeee")
+                await ctx.send(f"How can I check the drop stats if you don't enter an item? reeeeeee")
         else:
-            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting loot sheet info outside of bot-commands. Nice try!")
+            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting drop stats info outside of bot-commands. Nice try!")
         
 
 async def setup(bot):
