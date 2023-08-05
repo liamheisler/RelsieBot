@@ -64,6 +64,9 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                     df = pd.read_excel(DATA_PATH.joinpath(latest_file))
                 else:
                     df = pd.read_excel(DATA_PATH.joinpath(latest_file), sheet_name=raid)
+
+                archived_loot = pd.read_excel(DATA_PATH.joinpath(latest_file), sheet_name="loot")
+
                 logger.info(f"read_data: {latest_file} identified as latest data file. Extracted data.")
 
                 # Drop up to row n since the first rows are ugly and unneccessary
