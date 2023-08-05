@@ -391,7 +391,8 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         
         logger.info(f"item_name = {item_name}, tier = {tier}")
 
-        df = self.read_archived_loot_data()
+        df_arch = self.read_archived_loot_data()
+        df = self.read_onslaught_data(tier)
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
@@ -400,7 +401,10 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                 # Get a list of relevent items
                 #item_name = item_name + "(Heroic)" # just assume it's all heroic
 
-                item_list = list(df['Notes'].unique())
+                dropped_item_list = list(df_arch['Notes'].unique())
+                item_list = list(df['item'].unique())
+
+                dropped_item_list = [str(x).lower() for x in dropped_item_list]
                 item_list = [str(x).lower() for x in item_list]
 
                 # highest matching similarity score from fuzzss
@@ -408,7 +412,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
                 item_name = max(scores, key=scores.get)
 
-                if item_name.lower() in item_list:
+                if item_name.lower() in dropped_item_list:
                     async with ctx.typing():
                         # Define the embed for the msg
                         embed = discord.Embed(
@@ -417,7 +421,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                                 timestamp = ctx.message.created_at
                             )
                         
-                        loot_history = df[df['Notes'].str.lower() == item_name.lower()]
+                        loot_history = df_arch[df_arch['Notes'].str.lower() == item_name.lower()]
                         num_drops = loot_history.shape[0]
 
                         embed.add_field(
@@ -440,7 +444,18 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                         logger.info(f"checkdrops: sent drop stats to {ctx.message.author} in channel {ctx.message.channel.id}")
 
                 else:
-                    await ctx.send(f"How can I check the drop stats if you don't enter a valid item? reeeeeee")
+                    embed = discord.Embed(
+                            title = f"Drop Stats for: {item_name.upper()}",
+                            color = 0x808080,
+                            timestamp = ctx.message.created_at
+                        )
+                    embed.add_field(
+                        name = f"This item has not dropped yet...yikes.",
+                        value = f"$itemprio {item_name}",
+                        inline = False
+                    )
+                    await ctx.send(embed=embed)
+                    #await ctx.send(f"$itemprio {item_name}")
             else:
                 await ctx.send(f"How can I check the drop stats if you don't enter an item? reeeeeee")
         else:
