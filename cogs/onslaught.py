@@ -47,7 +47,25 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
     def has_numbers(self, inputString):
         return any(char.isdigit() for char in inputString)
     
-    def read_data(self, raid = None):
+    def read_archived_loot_data(self):
+        use_api = False
+        if use_api:
+            pass
+        else:
+            # an attempt to avoid hidden files...
+            DATA_FILES = [x for x in os.listdir(DATA_PATH) if x[0].isdigit()]
+            
+            # get data from the most recent prio file
+            if len(DATA_FILES) > 0:
+                latest_file = sorted(DATA_FILES, reverse=True)[0]
+
+                df = pd.read_excel(DATA_PATH.joinpath(latest_file), sheet_name="loot")
+
+                logger.info(f"read_archived_loot_data: {latest_file} identified as latest data file. Extracted data.")
+
+                return df
+    
+    def read_onslaught_data(self, raid = None):
         # path to /data. cwd should hopefully let it be cross platform? need to test
         # filename: get specific file name for now
         use_api = False
@@ -67,7 +85,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
                 archived_loot = pd.read_excel(DATA_PATH.joinpath(latest_file), sheet_name="loot")
 
-                logger.info(f"read_data: {latest_file} identified as latest data file. Extracted data.")
+                logger.info(f"read_onslaught_data: {latest_file} identified as latest data file. Extracted data.")
 
                 # Drop up to row n since the first rows are ugly and unneccessary
                 n = 6
@@ -110,7 +128,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         
         logger.info(f"item_name = {item_name}, tier = {tier}")
 
-        df = self.read_data(tier)
+        df = self.read_onslaught_data(tier)
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
@@ -208,7 +226,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         else:
             tier = 'active_tier'
 
-        df = self.read_data(tier).fillna("")
+        df = self.read_onslaught_data(tier).fillna("")
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
@@ -287,12 +305,11 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         else:
             tier = 'active_tier'
         
-        df = self.read_data(tier).fillna("")
+        df = self.read_onslaught_data(tier).fillna("")
 
         bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 
         if ctx.message.channel.id == bot_commands_channel_ID:
-            logger.info(ctx.message.channel)
             if player_name is not None:            
                 df_player = df[df.apply(lambda r: r.str.contains(player_name, case=False).any(), axis=1)]
                 
@@ -353,6 +370,87 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             await ctx.send(f"Can't get up next items for {player_name} yet :(...")
         else:
             await ctx.send(f"Can't get {player_name}'s items if they aren't on the loot sheet!")
+
+
+    @commands.command(
+        help="List priorities for a given item",
+        aliases=['cd', 'drops', 'dropstats']
+    )
+    async def checkdrops(self, ctx, *args):
+        # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
+        logger.info(f"{ctx.message.author} called $checkdrops in channel {ctx.message.channel}")
+
+        available_tiers = ['ulduar', 'togc', 'icc']
+        tier = [arg for arg in args if arg in available_tiers]
+        item_name = " ".join([arg for arg in args if arg not in available_tiers])
+
+        if len(tier) == 1:
+            tier = tier[0]
+        else:
+            tier = 'active_tier'
+        
+        logger.info(f"item_name = {item_name}, tier = {tier}")
+
+        df = self.read_archived_loot_data()
+
+        bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
+
+        if ctx.message.channel.id == bot_commands_channel_ID:
+            if item_name is not None:
+                # Get a list of relevent items
+                #item_name = item_name + "(Heroic)" # just assume it's all heroic
+
+                item_list = list(df['Notes'].unique())
+                item_list = [str(x).lower() for x in item_list]
+
+                # highest matching similarity score from fuzzss
+                scores = {item:fuzz.ratio(item, item_name.lower()) for item in item_list}
+
+                item_name = max(scores, key=scores.get)
+
+                if item_name.lower() in item_list:
+                    async with ctx.typing():
+                        # Define the embed for the msg
+                        embed = discord.Embed(
+                                title = f"Drop Stats for: {item_name.upper()}",
+                                color = 0x808080,
+                                timestamp = ctx.message.created_at
+                            )
+                        
+                        loot_history = df[df['Notes'].str.lower() == item_name.lower()]
+                        num_drops = loot_history.shape[0]
+
+                        embed.add_field(
+                            name = f'Total # of drops:',
+                            value = num_drops
+                        )
+
+                        for index, row in loot_history.iterrows():
+                            passers = [row['Pass 1'], row['Pass 2'], row['Pass 3']]
+                            passers = [passer for passer in passers if pd.notnull(passer)]
+
+                            logger.info(passers)
+                            embed.add_field(
+                                name = f"{row['Date']} | {row['Received']}",
+                                value = f"{len(passers)} gamers passed",
+                                inline = False
+                            )
+                            # embed.add_field(
+                            #     name = f"Recipient:",
+                            #     value = f"{row['Received']}",
+                            #     inline = True
+                            # )
+                            
+                        # send msg back to user with the generated embed
+                        await ctx.send(embed=embed)
+                        logger.info(f"itemprio: sent item prio to {ctx.message.author} in channel {ctx.message.channel.id}")
+
+                else:
+                    await ctx.send(f"How can I check the item prio if you don't enter a valid item? reeeeeee")
+            else:
+                await ctx.send(f"How can I check the item prio if you don't enter an item? reeeeeee")
+        else:
+            await ctx.send(f"Sorry, {ctx.message.author.mention}, papa Slinky said no posting loot sheet info outside of bot-commands. Nice try!")
         
 
 async def setup(bot):
