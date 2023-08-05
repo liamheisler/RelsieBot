@@ -1,0 +1,8 @@
+archived_loot: 
+    because of the way fuzzy works, in checkdrops we'll just grab
+    a similar item.. so if it hasn't dropped yet at all the name wil just not make sense
+    - works as designed, but not as intended...
+    - soln: grab the item from the full list of potential items (i.e. from read_onslaught_data)
+        - then measure whether or not the "correct" (per fuzzy against the full item list) is in the 
+            df['Notes']..then proceed as normal
+        - if it's not, throw a custom embed that says count is 0
