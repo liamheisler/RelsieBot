@@ -89,9 +89,20 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         help="List priorities for a given item",
         aliases=['ipri', 'ip', 'item']
     )
-    async def itemprio(self, ctx, *, item_name=None):
+    async def itemprio(self, ctx, *args):
         # get onslaught data from dir we setup before hand... replaced with Google sheets API eventually
         logger.info(f"{ctx.message.author} called $itemprio in channel {ctx.message.channel}")
+
+        available_tiers = ['ulduar', 'togc', 'icc']
+        tier = [arg for arg in args if arg in available_tiers]
+        item_name = " ".join([arg for arg in args if arg not in available_tiers])
+
+        if len(tier) == 1:
+            tier = tier[0]
+        else:
+            tier = 'active_tier'
+        
+        logger.info(f"item_name = {item_name}, tier = {tier}")
 
         df = self.read_data()
 
@@ -179,8 +190,17 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         help="List priorities & competition for given player",
         aliases=['ppri', 'pp', 'player']
     )
-    async def playerprio(self, ctx, player_name):
+    async def playerprio(self, ctx, *args):
         logger.info(f"{ctx.message.author} called $playerprio in channel {ctx.message.channel}")
+
+        available_tiers = ['ulduar', 'togc', 'icc']
+        tier = [arg for arg in args if arg in available_tiers]
+        player_name = " ".join([arg for arg in args if arg not in available_tiers])
+
+        if len(tier) == 1:
+            tier = tier[0]
+        else:
+            tier = 'active_tier'
 
         df = self.read_data().fillna("")
 
@@ -249,8 +269,17 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         help="Get the loot sheet for that player",
         aliases=['sheet', 'loot', 'ls']
     )
-    async def lootsheet(self, ctx, player_name=None):
+    async def lootsheet(self, ctx, *args):
         logger.info(f"{ctx.message.author} called $lootsheet in channel {ctx.message.channel}")
+
+        available_tiers = ['ulduar', 'togc', 'icc']
+        tier = [arg for arg in args if arg in available_tiers]
+        player_name = " ".join([arg for arg in args if arg not in available_tiers])
+
+        if len(tier) == 1:
+            tier = tier[0]
+        else:
+            tier = 'active_tier'
         
         df = self.read_data().fillna("")
 
