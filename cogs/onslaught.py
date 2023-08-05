@@ -431,7 +431,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
                             embed.add_field(
                                 name = f"{row['Date']} | {row['Received']}",
-                                value = f"{len(passers)} gamers passed",
+                                value = f"",
                                 inline = False
                             )
                             
