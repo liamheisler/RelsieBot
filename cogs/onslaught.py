@@ -290,7 +290,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
 
     @commands.command(
-        help="Get the loot sheet for that player",
+        help="Get the loot sheet for a specific player",
         aliases=['sheet', 'loot', 'ls']
     )
     async def lootsheet(self, ctx, *args):
@@ -373,7 +373,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
 
 
     @commands.command(
-        help="List priorities for a given item",
+        help="Loot / drop history for a specified item",
         aliases=['cd', 'drops', 'dropstats']
     )
     async def checkdrops(self, ctx, *args):
@@ -434,11 +434,6 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
                                 value = f"{len(passers)} gamers passed",
                                 inline = False
                             )
-                            # embed.add_field(
-                            #     name = f"Recipient:",
-                            #     value = f"{row['Received']}",
-                            #     inline = True
-                            # )
                             
                         # send msg back to user with the generated embed
                         await ctx.send(embed=embed)
