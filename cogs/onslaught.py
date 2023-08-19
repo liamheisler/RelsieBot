@@ -63,11 +63,11 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         return self.db.get_drops(tier, item)
     
     
-    def read_onslaught_data(self, tier = None, item = None):
+    def read_onslaught_data(self, tier, item):
         return self.db.get_prio(tier, item)
     
 
-    def find_item_name(self, df, tier = None, item_name = None):
+    def find_item_name(self, df, tier, item_name):
         #df = self.db.get_prio(tier)
 
         item_list = list(df['item'].unique())
@@ -364,12 +364,12 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
             if len(tier) == 1:
                 tier = tier[0]
             else:
-                tier = 'active_tier'
+                tier = self.active_tier
             
             logger.info(f"item_name = {item_name}, tier = {tier}")
 
-            df_arch = self.read_archived_loot_data()
-            df = self.read_onslaught_data(tier)
+            df_arch = self.read_archived_loot_data(tier, None)
+            df = self.read_onslaught_data(tier, None)
 
             bot_commands_channel_ID = discord.utils.get(ctx.guild.channels, name="bot-commands").id
 

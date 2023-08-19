@@ -58,6 +58,8 @@ class RelsieDB:
         df.columns = df.iloc[0]
         df = df.iloc[1:, 3:]
 
+        df = df[(df['Item Not Received Data'] != "#VALUE!") & (df['Item Not Received Data'].notnull())]
+
         # assign last udpated date to the data to current date
         df['last_updated'] = date.today()
 
@@ -174,5 +176,6 @@ class RelsieDB:
         self.connection.close()
     
 
-# db = RelsieDB()
-# db.update_prio()
+db = RelsieDB()
+db.update_archived_loot()
+db.update_prio()

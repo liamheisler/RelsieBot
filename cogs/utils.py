@@ -24,6 +24,8 @@ class UtilsCog(commands.Cog, name='Utils'):
     async def refreshdb(self, ctx):
         if ctx.message.author.id == 196824685185466378:
             logger.info("Relsie called DB refresh")
+            await ctx.send(f'Request recieved {ctx.message.author.mention}. Refreshing DBs...')
+
             arch_loot_flag = self.db.update_archived_loot()
             prio_flag = self.db.update_prio()
 
