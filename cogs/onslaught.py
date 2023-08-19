@@ -47,6 +47,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
         self.ip_enabled = True  # enables the item prio command
         self.ls_enabled = True  # enables the loot sheet command 
         self.up_enabled = True  # enables the upnext command
+        self.cd_enabled = True  # enables check drops command
     
 
     # for debug purposes
