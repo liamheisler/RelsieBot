@@ -30,10 +30,10 @@ handlers:
         encoding: utf8
 
 loggers:
-    my_module:
-        level: ERROR
-        handlers: [console]
-        propagate: no
+    utility.database:
+        level: INFO
+        handlers: [console, info_file_handler, error_file_handler]
+        propagate: false
 
 root:
     level: INFO
