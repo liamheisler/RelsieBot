@@ -18,9 +18,6 @@ from io import BytesIO
 import datetime, os, sys, pytz, random, pandas as pd
 from pathlib import Path
 
-# database
-from utility.database import RelsieDB
-
 # setup and config logging
 import logging, logging.config, yaml
 
