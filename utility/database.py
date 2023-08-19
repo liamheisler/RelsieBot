@@ -12,6 +12,8 @@ import numpy as np
 # python util
 from pathlib import Path
 from datetime import datetime, date
+from dotenv import load_dotenv, find_dotenv
+import os
 
 # logging
 import logging
@@ -19,9 +21,12 @@ logger = logging.getLogger(__name__)
 
 ROOT = Path(__file__).absolute().parent.parent
 
+# venv for sheet id
+load_dotenv(find_dotenv())
+
 class RelsieDB:
     DB_LOCATION = ROOT / 'data' / 'db' / 'relsie.db'
-    sheet_id = '1FX5RiuOkcgLPE5gyKae34Mpv7CkVkheCZJzA7InUrm4'
+    sheet_id = os.environ.get("MONGRELS_SHEET_ID")
 
     gids = {
         'archived_loot': '89531371',
