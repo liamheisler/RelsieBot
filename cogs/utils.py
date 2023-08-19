@@ -3,17 +3,38 @@ from discord.ext import commands
 import asyncio #, nest_asyncio
 import os
 
+from utility.database import RelsieDB
+
 import logging
 logger = logging.getLogger(__name__)
 
 class UtilsCog(commands.Cog, name='Utils'):
     def __init__(self, bot):
         self.bot = bot
+        self.db = RelsieDB()
+
 
     @commands.command()
     async def ping(self, ctx):
         logger.info(f"{ctx.message.author} called $ping in channel {ctx.message.channel}")
         await ctx.send(f'I am here, {ctx.message.author.mention}!')
+        
+    
+    @commands.command()
+    async def refreshdb(self, ctx):
+        if ctx.message.author.id == 196824685185466378:
+            logger.info("Relsie called DB refresh")
+            arch_loot_flag = self.db.update_archived_loot()
+            prio_flag = self.db.update_prio()
+
+            if arch_loot_flag and prio_flag:
+                await ctx.send(f'Refreshed SQLite3 DBs, {ctx.message.author.mention}!')
+            else:
+                await ctx.send(f'Could not refresh all DBs, {ctx.message.author.mention}! Archive: {arch_loot_flag} | Prio: {prio_flag}')
+        else:
+            print("relsbad")
+            await ctx.send(f'Sorry, {ctx.message.author.mention}, only Relsie can do this!')
+
 
     @commands.command(help="Reloads all or a specified cog")
     async def reload(self, ctx, cog=None):
