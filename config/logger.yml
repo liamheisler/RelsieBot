@@ -35,6 +35,12 @@ loggers:
         handlers: [console, info_file_handler, error_file_handler]
         propagate: false
 
+    utility.trivia_db:
+        level: INFO
+        handlers: [console, info_file_handler, error_file_handler]
+        propagate: false
+
+
 root:
     level: INFO
     handlers: [console, info_file_handler, error_file_handler]

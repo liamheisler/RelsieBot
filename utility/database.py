@@ -175,12 +175,10 @@ class RelsieDB:
         else:
             logger.info("Tier not specified, please specify one!")
 
-    
-
     def close(self):
         self.connection.close()
     
 
-db = RelsieDB()
-db.update_archived_loot()
-db.update_prio()
+# db = RelsieDB()
+# db.update_archived_loot()
+# db.update_prio()
