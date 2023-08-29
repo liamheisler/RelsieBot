@@ -7,7 +7,7 @@ import random
 import string
 
 from utility.database import RelsieDB
-from utility.trivia_db import TriviaDB
+from utility.database import TriviaDB
 
 import logging
 logger = logging.getLogger(__name__)
