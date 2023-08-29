@@ -26,15 +26,14 @@ class BlizzardAPI:
 
         self._client_id = os.environ.get("BLIZZARD_API_CLIENT_ID")
         self._client_secret = os.environ.get("BLIZZARD_API_CLIENT_SECRET")
-        self._access_token = self.create_access_token(self._client_id, self._client_secret).get("access_token")
-
-        print(f"access token: {self._access_token}")
+        self._access_token = self._create_access_token(self._client_id, self._client_secret).get("access_token")
 
         self._api_url = "https://{0}.api.blizzard.com{1}"
 
     
-    def create_access_token(self, client_id, client_secret, region = 'us'):
-        data = {'grant_type': 'client_credentials'}
+    def _create_access_token(self, client_id, client_secret, region = 'us'):
+        data = {'grant_type': 'client_credentials', 'scope': 'wow.profile'}
+
         response = requests.post('https://%s.battle.net/oauth/token' % region, data=data, auth=(client_id, client_secret))
 
         return self._response_handler(response)
@@ -52,7 +51,7 @@ class BlizzardAPI:
         if query_params.get("access_token") is None:
             query_params["access_token"] = self._access_token
         
-        print(url)
+        print(url, query_params)
 
         response = self._session.get(url, params=query_params)
 
@@ -74,9 +73,9 @@ class BlizzardAPI:
 
 bapi = BlizzardAPI()
 
-resource = "/profile/wow/character/statistics/Chumpjohn"
+resource = "/data/wow/character/pvp-summary/Relsie"
 region = "us"
 locale = "en_US"
 
-query_params = {"namespace": f"static-classic-{region}", "locale": locale}
+query_params = {"namespace": f"dynamic-classic-{region}", "locale": locale}
 print(bapi.get_resource(resource, region, query_params))
