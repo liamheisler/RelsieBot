@@ -26,6 +26,8 @@ class TriviaCog(commands.Cog, name='Trivia'):
         # Grab a question!
         self.current_question_data = self.trivia_db.get_question()
 
+        logger.info(f"fetched Q from get_question: {self.current_question_data}")
+
         self.where_was_question_asked = ctx.message.channel.id
 
         self.current_category = self.current_question_data['category']
