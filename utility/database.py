@@ -32,7 +32,7 @@ class RelsieDB:
         'archived_loot': '89531371',
         'ulduar': '217967088',
         'togc': '2078549246',
-        'icc': ''
+        'icc': '1447891012'
     }
 
     available_tiers = ['togc', 'ulduar'] # as of mid august '23
