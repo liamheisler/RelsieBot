@@ -34,7 +34,6 @@ class UtilsCog(commands.Cog, name='Utils'):
             else:
                 await ctx.send(f'Could not refresh all DBs, {ctx.message.author.mention}! Archive: {arch_loot_flag} | Prio: {prio_flag}')
         else:
-            print("relsbad")
             await ctx.send(f'Sorry, {ctx.message.author.mention}, only Relsie can do this!')
 
 

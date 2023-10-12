@@ -35,7 +35,7 @@ class RelsieDB:
         'icc': '1447891012'
     }
 
-    available_tiers = ['togc', 'ulduar'] # as of mid august '23
+    available_tiers = ['togc', 'ulduar', 'icc'] # as of mid october '23
 
 
     def __init__(self, db_location = None):
@@ -82,6 +82,8 @@ class RelsieDB:
 
                 link = f'https://docs.google.com/spreadsheets/d/{self.sheet_id}/export?gid={gid}&format=csv'
 
+                logger.info(f"Refreshing {tier} via {link}")
+
                 df = pd.read_csv(f"{link}", encoding='utf-8')
 
                 # Drop up to row n since the first rows are ugly and unneccessary
@@ -112,6 +114,8 @@ class RelsieDB:
                 gid = self.gids.get(tier)
 
                 link = f'https://docs.google.com/spreadsheets/d/{self.sheet_id}/export?gid={gid}&format=csv'
+                
+                logger.info(f"Refreshing {tier} via {link}")
 
                 df = pd.read_csv(f"{link}", encoding='utf-8')
 
@@ -133,7 +137,7 @@ class RelsieDB:
                 # write to the db table
                 df.to_sql(tier, self.connection, if_exists='replace')
 
-                return True
+            return True
 
         
     def get_drops(self, tier = None, item = None):
@@ -141,7 +145,7 @@ class RelsieDB:
         if tier is not None:
             if tier in ['ulduar', 'togc', 'icc']:
                 if item is not None:
-                    if tier == "togc":
+                    if tier in ['togc', 'icc']:
                         sql = f'SELECT * FROM archived_loot DB WHERE DB.NOTES IN ("{item} (Heroic)")'
                     else:
                         sql = f'SELECT * FROM archived_loot DB WHERE DB.NOTES IN ("{item}")'
@@ -161,14 +165,14 @@ class RelsieDB:
         if tier is not None:
             if tier in ['ulduar', 'togc', 'icc']:
                 if item is not None:
-                    if tier == "togc":
+                    if tier in ['togc', 'icc']:
                         sql = f'SELECT * FROM {tier} DB WHERE DB.item IN ("{item} (Heroic)")'
                     else:
                         sql = f'SELECT * FROM {tier} DB WHERE DB.item IN ("{item}")'
                 else:
                     sql = f'SELECT * FROM {tier}'
 
-                logger.info("Returning data from get_prio to calling function")
+                logger.info(f"Returning data from get_prio to calling function: {sql}")
                 return pd.read_sql(sql, con=self.connection)
             else:
                 logger.info("Improper tier selected, could not write to DB")

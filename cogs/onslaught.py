@@ -41,7 +41,7 @@ class OnslaughtCog(commands.Cog, name='Onslaught'):
     def __init__(self, bot):
         self.bot = bot
         self.db = RelsieDB()
-        self.active_tier = 'togc'
+        self.active_tier = 'icc'
 
         self.pp_enabled = False # enables the player prio command
         self.ip_enabled = True  # enables the item prio command
